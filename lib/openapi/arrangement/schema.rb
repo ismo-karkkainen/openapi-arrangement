@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Copyright © 2024-2025 Ismo Kärkkäinen
+# Copyright © 2024-2026 Ismo Kärkkäinen
 # Licensed under Universal Permissive License. See LICENSE.txt.
 
 module OpenAPIArrangement
@@ -104,6 +104,15 @@ module OpenAPIArrangement
           next if r.nil?
           refs[r] = reqs.include?(name) || refs.fetch(r, false)
         end
+        schema.fetch('patternProperties', {}).each_value do |spec|
+          r = spec['$ref']
+          next if r.nil?
+          refs[r] = refs.fetch(r, false)
+        end
+        spec = schema['additionalProperties']
+        return unless spec.is_a?(Hash)
+        r = spec['$ref']
+        refs[r] = refs.fetch(r, false) unless r.nil?
       end
     end
 

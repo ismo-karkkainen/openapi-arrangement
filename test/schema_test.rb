@@ -220,6 +220,27 @@ properties:
     assert(r['ra'], 'ra found')
     assert_false(r['rb'], 'rb found')
     assert(r['rc'], 'rc found')
+    r = {}
+    s = YAML.safe_load(%(---
+patternProperties:
+  pattern:
+    $ref: rd
+))
+    Schema::Info.gather_refs(r, s)
+    assert_false(r['rd'], 'rd found')
+    r = {}
+    s = YAML.safe_load(%(---
+additionalProperties: false
+))
+    Schema::Info.gather_refs(r, s)
+    assert(r.empty?, 'nothing added')
+    r = {}
+    s = YAML.safe_load(%(---
+additionalProperties:
+  $ref: rf
+))
+    Schema::Info.gather_refs(r, s)
+    assert_false(r['rf'], 'rf found')
   end
 end
 
